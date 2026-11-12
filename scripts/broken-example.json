@@ -1,0 +1,10 @@
+{
+  "version": "broken-demo",
+  "components": [
+    { "id": "bus-x", "name": "Mystery bus", "category": "bus", "description": "Missing slots and source", "massKg": -5, "powerW": 1, "costM": 1, "lifeYears": 3 }
+  ],
+  "instruments": [],
+  "orbits": [],
+  "launchVehicles": [],
+  "objectives": []
+}
