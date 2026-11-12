@@ -3,6 +3,8 @@
 **Design a space mission. Launch it. Find out why it worked or failed.**
 A browser game for the NASA Space Apps Challenge 2026 challenge *"Space Mission Design Game"*.
 
+**▶ Play it: https://mission-control-space-game.vercel.app**
+
 > 📸 _Add a screenshot or GIF of "Fly the Mission" here before submitting._
 
 ## The problem
