@@ -24,7 +24,8 @@ export type Step = {
   event?: MissionEvent;
 };
 
-export type Failure = { headline: string; why: string; fixes: string[]; ruleOfThumb: string; constraintId?: ConstraintId };
+export type FixOption = { text: string; design: Design };
+export type Failure = { headline: string; why: string; fixes: FixOption[]; ruleOfThumb: string; constraintId?: ConstraintId };
 
 export type SimResult = {
   outcome: 'success' | 'failure';
@@ -68,7 +69,7 @@ export function simulateMission(design: Design, catalog: Catalog, opts: SimOptio
 
   // pick surprise events (seeded)
   const random = rng(opts.seed ?? 1);
-  let events: MissionEvent[] = [];
+  const events: MissionEvent[] = [];
   if (opts.events && catalog.events.length) {
     const pool = [...catalog.events];
     for (let i = 0; i < 2 && pool.length; i++) events.push(pool.splice(Math.floor(random() * pool.length), 1)[0]);
@@ -88,7 +89,7 @@ export function simulateMission(design: Design, catalog: Catalog, opts: SimOptio
       ruleOfThumb: step.event
         ? 'Surprises happen in space. Spare margin (power, storage, budget) is what saves missions.'
         : RULES_OF_THUMB[ruleKey],
-      fixes: suggestFixes(design, catalog, target).map(describeFix),
+      fixes: suggestFixes(design, catalog, target).map((f) => ({ text: describeFix(f), design: f.design })),
     };
   };
   const pass = (step: Omit<Step, 'status'>, status: Status = 'ok') => steps.push({ ...step, status });

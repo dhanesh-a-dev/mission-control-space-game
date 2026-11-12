@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { loadCatalog, type LoadResult } from './data/adapter';
+import { GameProvider, useGame } from './ui/state';
+import { Landing } from './ui/Landing';
+import { ObjectivePicker } from './ui/ObjectivePicker';
+import { Builder } from './ui/Builder';
+import { FlyMission } from './ui/FlyMission';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Screens({ usingFallback }: { usingFallback: boolean }) {
+  const { state, dispatch } = useGame();
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [state.screen]);
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <header className="topbar">
+        <button className="brand" onClick={() => dispatch({ type: 'go', screen: 'landing' })} aria-label="Mission Control home">
+          <span aria-hidden="true">🛰️</span> Mission Control
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+        {usingFallback && (
+          <span className="offline-note" role="status">
+            Using offline data
+          </span>
+        )}
+      </header>
+      <main id="main">
+        {state.screen === 'landing' && <Landing />}
+        {state.screen === 'objectives' && <ObjectivePicker />}
+        {state.screen === 'build' && state.design && <Builder />}
+        {state.screen === 'fly' && state.design && <FlyMission key={state.flights} />}
+      </main>
+      <footer className="footer">
+        Data inspired by NASA public references (simplified for learning). Not affiliated with or endorsed by NASA.
+      </footer>
     </>
-  )
+  );
 }
 
-export default App
+export default function App() {
+  const [data, setData] = useState<LoadResult | null>(null);
+  useEffect(() => {
+    loadCatalog().then((r) => {
+      if (r.problems.length) console.warn('Catalog problems, using fallback:', r.problems);
+      setData(r);
+    });
+  }, []);
+  if (!data) return <p className="loading">Loading mission catalog…</p>;
+  return (
+    <GameProvider catalog={data.catalog}>
+      <Screens usingFallback={data.usingFallback} />
+    </GameProvider>
+  );
+}
