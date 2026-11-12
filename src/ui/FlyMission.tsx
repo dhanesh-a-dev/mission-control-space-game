@@ -8,6 +8,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { simulateMission } from '../engine';
 import { STATUS_TEXT } from './Dashboard';
 import { useGame } from './state';
+import { MissionVisual } from './three/View3D';
+import { sceneFor, spacecraftVisual } from './three/visuals';
+import type { SceneMode } from './three/MissionScene';
 
 const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -37,6 +40,22 @@ export function FlyMission() {
   const pos = shown === 0 ? 0 : current.progress;
   const failedNow = done && sim.outcome === 'failure';
 
+  // what the 3D scene should show for the step on screen
+  const visual = useMemo(() => spacecraftVisual(design, catalog), [design, catalog]);
+  const scene = sceneFor(catalog.orbits.find((o) => o.id === design.orbitId));
+  const isFail = shown > 0 && current.status === 'fail';
+  let mode: SceneMode = 'assembly';
+  if (shown > 0) {
+    if (current.phase === 'review') mode = isFail ? 'cancelled' : 'assembly';
+    else if (current.phase === 'launch') mode = isFail ? 'explode' : 'launch';
+    else if (current.phase === 'cruise') mode = 'cruise';
+    else if (current.phase === 'ops') mode = isFail ? 'tumble' : 'orbit';
+    else mode = 'success';
+  }
+  const powerFailure =
+    isFail && (['power', 'battery'].includes(sim.failure?.constraintId ?? '') || ['power', 'solar', 'battery'].includes(current.event?.kind ?? '') || /power/i.test(current.title));
+  const sceneCaption = shown === 0 ? 'Ready on the pad' : `${current.when} · ${current.title}`;
+
   return (
     <section className="page fly">
       <div className="fly-head">
@@ -53,6 +72,8 @@ export function FlyMission() {
           </button>
         )}
       </div>
+
+      <MissionVisual v={visual} scene={scene} mode={mode} powered={!powerFailure} caption={sceneCaption} />
 
       <div className="track panel" aria-hidden="true">
         <div className="track-line">

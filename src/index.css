@@ -250,6 +250,21 @@ main { max-width: 1240px; margin: 0 auto; padding: 0 16px 3rem; }
 .breakdown .bar-fill { background: var(--ok); }
 .result-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
 
+/* ============ 3D / flat spacecraft views ============ */
+.viz { padding: 0; overflow: hidden; margin: 0; }
+.viz-stage { position: relative; height: 230px; background: radial-gradient(ellipse at 50% 40%, #121a35, #070b17 70%); }
+.viz-mission .viz-stage { height: 340px; }
+.viz-mission { margin-bottom: 1rem; }
+.viz-stage canvas { display: block; touch-action: pan-y; }
+.viz-loading { display: grid; place-items: center; height: 100%; color: var(--muted); font-size: 0.85rem; }
+.viz figcaption { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; padding: 0.5rem 0.8rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); }
+.view-toggle { font: 600 0.75rem var(--font-body); color: var(--text); background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.65rem; cursor: pointer; white-space: nowrap; }
+.view-toggle[aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+.flat-view { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.75rem; }
+.flat-view svg { max-width: 100%; max-height: 82%; }
+.flat-failed { opacity: 0.45; transform: rotate(-12deg); transition: transform 0.6s ease; }
+.flat-mode { margin: 0.4rem 0 0; font-weight: 600; font-size: 0.9rem; }
+
 /* ============ Mobile ============ */
 @media (max-width: 960px) {
   .builder-grid { grid-template-columns: 1fr; }
@@ -257,6 +272,9 @@ main { max-width: 1240px; margin: 0 auto; padding: 0 16px 3rem; }
   .builder-side { display: contents; } /* lets the dashboard stick to the whole page */
   .dashboard { order: -1; position: sticky; top: 0; z-index: 5; max-height: 40vh; overflow-y: auto; box-shadow: 0 10px 24px #000a; padding: 0.7rem; }
   .dash-head { margin-bottom: 0.4rem; }
+  .viz-builder { order: -2; }
+  .viz-stage { height: 200px; }
+  .viz-mission .viz-stage { height: 250px; }
   .gauges { grid-template-columns: repeat(2, 1fr); gap: 0.35rem; }
   .gauge { padding: 0.3rem 0.5rem; }
   .gauge-top { font-size: 0.8rem; }

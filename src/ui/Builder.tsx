@@ -1,6 +1,8 @@
 import { CATEGORIES, CATEGORY_LABELS, type Component } from '../data/schema';
 import { computeBudget, checkConstraints, fmt } from '../engine';
 import { Dashboard } from './Dashboard';
+import { BuilderVisual } from './three/View3D';
+import { spacecraftVisual } from './three/visuals';
 import { useGame } from './state';
 
 const POINTING = ['', 'rough', 'good', 'precise'];
@@ -25,7 +27,8 @@ export function Builder() {
   const design = state.design!;
   const objective = catalog.objectives.find((o) => o.id === design.objectiveId)!;
   const b = computeBudget(design, catalog);
-  const broken = checkConstraints(design, catalog, b).filter((c) => c.status === 'fail').length;
+  const checks = checkConstraints(design, catalog, b);
+  const broken = checks.filter((c) => c.status === 'fail').length;
   const slotsFull = b.instrumentCount >= b.instrumentSlots;
   const orbit = catalog.orbits.find((o) => o.id === design.orbitId);
 
@@ -172,6 +175,11 @@ export function Builder() {
         </div>
 
         <div className="builder-side">
+          <BuilderVisual
+            v={spacecraftVisual(design, catalog)}
+            powered={checks.find((c) => c.id === 'power')?.status !== 'fail'}
+            caption={`Your spacecraft · ${fmt(b.massKg)} kg · ${b.instrumentCount} instrument${b.instrumentCount === 1 ? '' : 's'}`}
+          />
           <Dashboard />
           <div className="panel launch-panel">
             <label className="toggle">

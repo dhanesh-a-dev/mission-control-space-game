@@ -12,7 +12,8 @@ Designing a mission means balancing competing demands. A better instrument adds 
 1. **Choose an objective**: Earth Watcher (wildfires, starter), Storm Sentinel (solar storms at L1, medium) or Red Planet Scout (Mars orbiter, hard).
 2. **Build the spacecraft**: pick a bus, solar panels, battery, radio, computer, attitude control, up to 3 instruments, an orbit and a rocket. A **live dashboard** tracks mass, power, battery, budget, data, lifetime and science with ✓ OK / ! Tight / ✕ Broken labels. Every change shows *"Because of X: +12 W power use, +$1.5M cost…"*.
 3. **Fly the Mission** (signature feature): an animated timeline (design review → launch → arrival → first eclipse → science → yearly checks → end of mission) that **stops at the first thing that breaks** and explains it with real numbers, e.g. *"Day 7: Data jam. Your instruments make 6 GB/day but your radio can only send 1.5 GB/day."* It then suggests the cheapest fixes, each with an **Apply & edit** button.
-4. **Score** (0–100) rewards science AND healthy margins. **Random events** (solar flare, ground-station outage, launch delay, micrometeoroid, battery cold snap) test whether you left room for surprises.
+4. **3D views**: your spacecraft is built live in 3D as you pick parts (bigger bus = bigger body, more solar power = longer unfolding wings, fast radio = dish antenna, instruments appear as colored lenses). During Fly the Mission a 3D scene shows the launch, the cruise, and the orbit around Earth or Mars (or the L1 point between Earth and Sun). A failure shows as a rocket exploding or a dead spacecraft tumbling away. The look is computed from the catalog numbers, so new data gets a sensible model automatically. A flat drawing replaces 3D if the device cannot run it, and there is a 3D on/off switch.
+5. **Score** (0–100) rewards science AND healthy margins. **Random events** (solar flare, ground-station outage, launch delay, micrometeoroid, battery cold snap) test whether you left room for surprises.
 
 There is no single right answer: a brute-force search (`scripts/count-solutions.ts`) finds **1,522** winning designs for Earth Watcher, **6,764** for Storm Sentinel and **48** for Red Planet Scout.
 
@@ -39,7 +40,7 @@ All values are **simplified estimates for learning**, rounded and labelled as es
 
 Not affiliated with or endorsed by NASA. No NASA logos are used.
 
-Open-source libraries: React, Vite, TypeScript, Zod, Vitest (MIT licences). Fonts: Space Grotesk, Inter, JetBrains Mono (Google Fonts, OFL).
+Open-source libraries: React, Vite, TypeScript, Zod, Vitest, Three.js, React Three Fiber, Drei (MIT licences). Fonts: Space Grotesk, Inter, JetBrains Mono (Google Fonts, OFL).
 
 ## Run it locally
 You need [Node.js LTS](https://nodejs.org).
@@ -63,6 +64,7 @@ src/data/fallback/        bundled backup copy (used if loading fails)
 public/data/catalog.json  the live copy the app loads
 src/engine/               pure rules: budget, constraints, simulate, explain (fixes), score + tests
 src/ui/                   React screens: Landing, ObjectivePicker, Builder, Dashboard, FlyMission
+src/ui/three/             3D spacecraft + mission scene, flat fallback, design→visual mapping
 scripts/                  validate-data, sync-data, count-solutions
 ```
 
